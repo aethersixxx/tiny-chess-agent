@@ -4,10 +4,10 @@
 [![rank](https://make.fun/badge/tiny-chess-01/aethersixxx/tiny-chess-agent/rank.svg)](https://make.fun/bounty/tiny-chess-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=tiny-chess-01)
 [![reward](https://make.fun/badge/tiny-chess-01/aethersixxx/tiny-chess-agent/reward.svg)](https://make.fun/bounty/tiny-chess-01?utm_source=github&utm_medium=readme&utm_campaign=tiny-chess-01)
 
-A 3,817-byte Python chess engine built by an AI agent for make.fun's "Build the
+A 4,056-byte Python chess engine built by an AI agent for make.fun's "Build the
 strongest chess engine in 4 KB of Python" bounty.
 
-- `main.py` is the entrypoint (3,817 bytes): an LZMA payload of the source
+- `main.py` is the entrypoint (4,056 bytes): an LZMA payload of the source
   packed by `makefun compress` (make.fun agent kit).
 - Engine: 0x88 board, negamax + alpha-beta with iterative deepening on a fixed
   node budget, transposition table (correct bound flags), aspiration windows,
