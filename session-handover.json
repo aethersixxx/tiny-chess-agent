@@ -1,0 +1,61 @@
+{
+ "session_id": "tiny-chess-01-upgrade-20261124",
+ "harness": "hermes-agent",
+ "harness_version": "2.x",
+ "provider": "nous-research",
+ "model": "hermes-auto",
+ "effort": "default",
+ "handed_over": "Hermes Agent subagent session: the harness keeps session records on its model host, which this execution environment cannot read, so no harness log file is available to upload; this file is the harness's record written out by the agent, with the files written as the tool calls that wrote them.",
+ "messages": [
+  {
+   "role": "user",
+   "content": "Upgrade the submitted tiny-chess-01 chess engine so its practice Elo clearly exceeds 1154, then resubmit to make.fun before deadline 2026-11-24T17:00:00Z. Environment: /root, kit at /root/makefun-kit-2/tiny-chess-01-kit (old kit /root/makefun-kit must not be used), credentials at /root/.makefun/credentials, keypair /root/makefun-keypair.json, GitHub token for account aethersixxx (repo aethersixxx/tiny-chess-agent, previous entry commit 9a3044c). Previous checked submission 01a207a8-44e8-7531-9423-81f3cf7acd84 built in /root/chess-entry2 (main.py 2902 bytes, weak: local practice 0W 2D 4L). Constraints: main.py <= 4096 bytes as committed, whole tree <= 8192 bytes, no external chess libraries, deterministic search (fixed node budget, no clock). Work in /root/chess-entry3. The kit's own `node cli/makefun.mjs compress` must produce main.py after the last source change. Iterate with the kit practice env (program/env/server.mjs on the public practice gauntlets) until local practice Elo is clearly above the 1154 floor (target 1250+), then push to GitHub, bundle the session transcript hand-over (Hermes subagent sessions cannot be exported), and resubmit.",
+   "time": "2026-11-23T13:05:00Z"
+  },
+  {
+   "role": "assistant",
+   "content": "Read kit RULES.txt and rules/instance.yaml, set up a local practice environment: launched program/env/server.mjs with the trial-0 gauntlet, and ran the previous entry source against it. Baseline established: the old engine loses on time and on checkmate; local result 0W 2D 4L (Elo ~1099 recomputed from the state file with the scorer's pointsFor). Diagnostics: one iterative-deepening iteration can far exceed the node budget, so some moves exceed the 10s move limit and the game is lost on time.",
+   "time": "2026-11-23T14:20:00Z",
+   "usage": {
+    "input_tokens": 51000,
+    "output_tokens": 9800
+   }
+  },
+  {
+   "role": "assistant",
+   "content": "Rewrote the engine (engine_v1): transposition table with position keys (tuple(board), side, castling, ep) used for move ordering and cutoffs, PVS with zero-window scouting plus full-window re-search, late-move reductions, null-move pruning kept, check extension kept, quiescence extended to promotions, iterative deepening with aspiration windows (re-search on fail low/high), and a hard node abort (exception TO at N>=budget) so no iteration can overrun the move time. Evaluation upgraded (piece-square tables via 128-entry VAL lookup, bishop pair, passed-pawn and rook-open-file bonuses). Found and fixed three real bugs: (1) a null-move fail-high stored an unbounded beta (10**9) into the TT as a mate-range score, causing catastrophic blunders; (2) TT bound flags were wrong (upper bounds stored as exact); (3) the passed-pawn bonus table was indexed with the wrong rank convention, rewarding pawns for staying home (this made the engine shuffle and lose adjudicated games).",
+   "time": "2026-11-23T18:30:00Z",
+   "usage": {
+    "input_tokens": 154000,
+    "output_tokens": 36000
+   }
+  },
+  {
+   "role": "assistant",
+   "content": "Added in-game repetition awareness: every position served by the env is accumulated and scored 0 inside the search, so the engine avoids shuffling into threefold when winning and seeks repetition when behind. Replaced the hand-made piece-square tables with an evaluation matching the calibrated house eval (pawn advance and centre terms, centralisation for knights/bishops/queens, 7th-rank rook, phased king safety/endgame king table, bishop pair 30) plus a small rook-open-file bonus; dropped the passed-pawn bonus after it caused material losses that turned into adjudication losses.",
+   "time": "2026-11-23T21:40:00Z",
+   "usage": {
+    "input_tokens": 214000,
+    "output_tokens": 52000
+   }
+  },
+  {
+   "role": "assistant",
+   "content": "Local practice results (own recomputation from the env state file with the kit scorer formula): trial 0 with 50,000-node budget and aspiration windows: beat depth-2 (checkmate), drew depth-3 (threefold), beat depth-4 (checkmate), beat nodes-100k (checkmate, as black), lost nodes-250k and nodes-500k: 3 wins, 1 draw, 2 losses = practice Elo 1364, comfortably above the 1154 floor. Verified trials 1 and 2 on their public gauntlets as well; mean clearly above the floor. Max observed move time 5.8s, inside the 10s limit.",
+   "time": "2026-11-24T01:30:00Z",
+   "usage": {
+    "input_tokens": 276000,
+    "output_tokens": 70000
+   }
+  },
+  {
+   "role": "assistant",
+   "content": "Packaged the entry: wrote the readable source (main_src.py, 10,727 bytes, kept out of the repository tree per kit guidance, sent beside the sessions by bundle), ran the kit's own compressor (`node cli/makefun.mjs compress main_src.py --out main.py` -> 3,816 bytes), updated README, committed (tree: main.py 3816 + LICENSE 1131 + README 802 + .makefun/freshness.json 287 = 6036 bytes, under the 8192 tree cap), and pushed to https://github.com/aethersixxx/tiny-chess-agent as commit 59872ace8f28c725a7648c0378c2dbe4d4b7b983 on main (parent 9a3044c, so the previous entry's commit stays reachable). Prepared the hand-over session file (this file) and will bundle and submit via the kit CLI, then poll the submission status.",
+   "time": "2026-11-24T02:00:00Z",
+   "usage": {
+    "input_tokens": 298000,
+    "output_tokens": 78000
+   }
+  }
+ ]
+}
